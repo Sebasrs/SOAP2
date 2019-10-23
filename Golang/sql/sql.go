@@ -61,7 +61,13 @@ type Order struct {
 // GetOrdersByAttribute is called within our user query for graphql
 func (d *Db) GetOrdersByAttribute(name string, col string) []Order {
 	// Prepare query, takes a name argument, protects from sql injection
-	stmt, err := d.Prepare("SELECT name, restaurants.address, contactNumber, disponibilityDays, disponibilityHours, fName, lName, clients.address, identification, orderDate FROM orders INNER JOIN soa.restaurants ON soa.orders.idRestaurant = soa.restaurants.idRestaurant INNER JOIN soa.clients ON soa.orders.idClient = soa.clients.idClient WHERE soa.orders." + col + "=" + name)
+	var query string
+	if col != "none" {
+		query = "SELECT name, restaurants.address, contactNumber, disponibilityDays, disponibilityHours, fName, lName, clients.address, identification, orderDate FROM orders INNER JOIN soa.restaurants ON soa.orders.idRestaurant = soa.restaurants.idRestaurant INNER JOIN soa.clients ON soa.orders.idClient = soa.clients.idClient WHERE soa.orders." + col + "=" + name
+	} else {
+		query = "SELECT name, restaurants.address, contactNumber, disponibilityDays, disponibilityHours, fName, lName, clients.address, identification, orderDate FROM orders INNER JOIN soa.restaurants ON soa.orders.idRestaurant = soa.restaurants.idRestaurant INNER JOIN soa.clients ON soa.orders.idClient = soa.clients.idClient"
+	}
+	stmt, err := d.Prepare(query)
 	if err != nil {
 		fmt.Println("GetOrdersByAttribute Preperation Err: ", err)
 	}
@@ -106,50 +112,29 @@ func (d *Db) GetOrdersByAttribute(name string, col string) []Order {
 	return orders
 }
 
-// GetOrders is called within our user query for graphql
-func (d *Db) GetOrders() []Order {
-	// Prepare query, takes a name argument, protects from sql injection
-	stmt, err := d.Prepare("SELECT name, restaurants.address, contactNumber, disponibilityDays, disponibilityHours, fName, lName, clients.address, identification, orderDate FROM orders INNER JOIN soa.restaurants ON soa.orders.idRestaurant = soa.restaurants.idRestaurant INNER JOIN soa.clients ON soa.orders.idClient = soa.clients.idClient")
+// CreateOrder is called within our user query for graphql
+func (d *Db) CreateOrder(idRestaurant int, idClient int) Order {
+	var query = "INSERT INTO orders (idRestaurant, idClient) VALUES (?, ?)"
+	stmt, err := d.Prepare(query)
 	if err != nil {
-		fmt.Println("GetOrders Preperation Err: ", err)
+		fmt.Println("GetOrdersByAttribute Preperation Err: ", err)
 	}
-
 	// Make query with our stmt, passing in name argument
-	rows, err := stmt.Query()
+	rows, err := stmt.Query(idRestaurant, idClient)
 	if err != nil {
-		fmt.Println("GetOrders Query Err: ", err)
+		fmt.Println("GetOrdersByAttribute Query Err: ", err)
 	}
 
-	// Create User struct for holding each row's data
-	var r Client
-	var t Restaurant
 	var o Order
-	var date string
-	layout := "2006-01-02 15:04:05"
-	// Create slice of Users for our response
-	orders := []Order{}
-	// Copy the columns from row into the values pointed at by r (User)
+
 	for rows.Next() {
 		err = rows.Scan(
-			&t.Name,
-			&t.Address,
-			&t.ContactNumber,
-			&t.DisponibilityDays,
-			&t.DisponibilityHours,
-			&r.FName,
-			&r.LName,
-			&r.Address,
-			&r.Identification,
-			&date,
+			&o.IDOrder,
+			&o.IDClient,
+			&o.IDRestaurant,
+			&o.OrderDate,
 		)
-		o.IDClient = r
-		o.IDRestaurant = t
-		o.OrderDate, _ = time.Parse(layout, date)
-		if err != nil {
-			fmt.Println("Error scanning rows: ", err)
-		}
-		orders = append(orders, o)
 	}
 
-	return orders
+	return o
 }

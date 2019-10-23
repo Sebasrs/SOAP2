@@ -7,7 +7,8 @@ import (
 
 // Root holds a pointer to a graphql object
 type Root struct {
-	Query *graphql.Object
+	Query    *graphql.Object
+	Mutation *graphql.Object
 }
 
 // NewRoot returns base query type. This is where we add all the base queries
@@ -17,6 +18,7 @@ func NewRoot(db *sql.Db) *Root {
 
 	// Create a new Root that describes our base query set up. In this
 	// example we have a user query that takes one argument called name
+
 	root := Root{
 		Query: graphql.NewObject(
 			graphql.ObjectConfig{
@@ -40,6 +42,24 @@ func NewRoot(db *sql.Db) *Root {
 				},
 			},
 		),
+		Mutation: graphql.NewObject(
+			graphql.ObjectConfig{
+				Name: "Mutation",
+				Fields: graphql.Fields{
+					"createOrder": &graphql.Field{
+						Type: Order, // the return type for this field
+						Args: graphql.FieldConfigArgument{
+							"idRestaurant": &graphql.ArgumentConfig{
+								Type: graphql.NewNonNull(graphql.Int),
+							},
+							"idClient": &graphql.ArgumentConfig{
+								Type: graphql.NewNonNull(graphql.Int),
+							},
+						},
+						Resolve: resolver.OrderCreator,
+					},
+				},
+			}),
 	}
 	return &root
 }

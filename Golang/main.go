@@ -40,7 +40,7 @@ func initializeAPI() (*chi.Mux, *sql.Db) {
 	rootQuery := gql.NewRoot(db)
 	// Create a new graphql schema, passing in the the root query
 	sc, err := graphql.NewSchema(
-		graphql.SchemaConfig{Query: rootQuery.Query},
+		graphql.SchemaConfig{Query: rootQuery.Query, Mutation: rootQuery.Mutation},
 	)
 	if err != nil {
 		fmt.Println("Error creating schema: ", err)

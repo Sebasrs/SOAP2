@@ -52,6 +52,9 @@ var Order = graphql.NewObject(
 	graphql.ObjectConfig{
 		Name: "order",
 		Fields: graphql.Fields{
+			"idOrder": &graphql.Field{
+				Type: graphql.Int,
+			},
 			"idClient": &graphql.Field{
 				Type: Client,
 			},
