@@ -1,0 +1,17 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  address: MyString
+  contactNumber: MyString
+  disponibilityDays: MyString
+  disponibilityHours: MyString
+  Province_idProvince: 1
+
+two:
+  name: MyString
+  address: MyString
+  contactNumber: MyString
+  disponibilityDays: MyString
+  disponibilityHours: MyString
+  Province_idProvince: 1
