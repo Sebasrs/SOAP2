@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/bradford-hamilton/go-graphql-api/gql"
+	"../gql"
 	"github.com/go-chi/render"
 	"github.com/graphql-go/graphql"
 )
@@ -33,7 +33,6 @@ func (s *Server) GraphQL() http.HandlerFunc {
 		if err != nil {
 			http.Error(w, "Error parsing JSON request body", 400)
 		}
-
 		// Execute graphql query
 		result := gql.ExecuteQuery(rBody.Query, *s.GqlSchema)
 

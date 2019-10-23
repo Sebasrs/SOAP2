@@ -1,11 +1,11 @@
-package postgres
+package sql
 
 import (
 	"database/sql"
 	"fmt"
 
-	// postgres driver
-	_ "github.com/lib/pq"
+	//mysql driver
+	_ "github.com/go-sql-driver/mysql"
 )
 
 // Db is our database struct used for interacting with the database
@@ -30,56 +30,83 @@ func New(connString string) (*Db, error) {
 	return &Db{db}, nil
 }
 
-// ConnString returns a connection string based on the parameters it's given
-// This would normally also contain the password, however we're not using one
-func ConnString(host string, port int, user string, dbName string) string {
-	return fmt.Sprintf(
-		"host=%s port=%d user=%s dbname=%s sslmode=disable",
-		host, port, user, dbName,
-	)
+// Client shape
+type Client struct {
+	IDClient       int
+	FName          string
+	LName          string
+	Address        string
+	Identification string
 }
 
-// User shape
-type User struct {
-	ID         int
-	Name       string
-	Age        int
-	Profession string
-	Friendly   bool
-}
-
-// GetUsersByName is called within our user query for graphql
-func (d *Db) GetUsersByName(name string) []User {
+// GetClientsByName is called within our user query for graphql
+func (d *Db) GetClientsByName(name string) []Client {
 	// Prepare query, takes a name argument, protects from sql injection
-	stmt, err := d.Prepare("SELECT * FROM users WHERE name=$1")
+	stmt, err := d.Prepare("SELECT idClient, fName, lName, address, identification FROM clients WHERE fName='" + name + "'")
 	if err != nil {
 		fmt.Println("GetUserByName Preperation Err: ", err)
 	}
 
 	// Make query with our stmt, passing in name argument
-	rows, err := stmt.Query(name)
+	rows, err := stmt.Query()
 	if err != nil {
 		fmt.Println("GetUserByName Query Err: ", err)
 	}
 
 	// Create User struct for holding each row's data
-	var r User
+	var r Client
 	// Create slice of Users for our response
-	users := []User{}
+	clients := []Client{}
 	// Copy the columns from row into the values pointed at by r (User)
 	for rows.Next() {
 		err = rows.Scan(
-			&r.ID,
-			&r.Name,
-			&r.Age,
-			&r.Profession,
-			&r.Friendly,
+			&r.IDClient,
+			&r.FName,
+			&r.LName,
+			&r.Address,
+			&r.Identification,
 		)
 		if err != nil {
 			fmt.Println("Error scanning rows: ", err)
 		}
-		users = append(users, r)
+		clients = append(clients, r)
 	}
 
-	return users
+	return clients
+}
+
+// GetClients is called within our user query for graphql
+func (d *Db) GetClients() []Client {
+	// Prepare query, takes a name argument, protects from sql injection
+	stmt, err := d.Prepare("SELECT idClient, fName, lName, address, identification FROM clients")
+	if err != nil {
+		fmt.Println("GetUserByName Preperation Err: ", err)
+	}
+
+	// Make query with our stmt, passing in name argument
+	rows, err := stmt.Query()
+	if err != nil {
+		fmt.Println("GetUserByName Query Err: ", err)
+	}
+
+	// Create User struct for holding each row's data
+	var r Client
+	// Create slice of Users for our response
+	clients := []Client{}
+	// Copy the columns from row into the values pointed at by r (User)
+	for rows.Next() {
+		err = rows.Scan(
+			&r.IDClient,
+			&r.FName,
+			&r.LName,
+			&r.Address,
+			&r.Identification,
+		)
+		if err != nil {
+			fmt.Println("Error scanning rows: ", err)
+		}
+		clients = append(clients, r)
+	}
+
+	return clients
 }

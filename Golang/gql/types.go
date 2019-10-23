@@ -2,25 +2,22 @@ package gql
 
 import "github.com/graphql-go/graphql"
 
-// User describes a graphql object containing a User
-var User = graphql.NewObject(
+// Client describes a graphql object containing a User
+var Client = graphql.NewObject(
 	graphql.ObjectConfig{
-		Name: "User",
+		Name: "client",
 		Fields: graphql.Fields{
-			"id": &graphql.Field{
-				Type: graphql.Int,
-			},
-			"name": &graphql.Field{
+			"fName": &graphql.Field{
 				Type: graphql.String,
 			},
-			"age": &graphql.Field{
-				Type: graphql.Int,
-			},
-			"profession": &graphql.Field{
+			"lName": &graphql.Field{
 				Type: graphql.String,
 			},
-			"friendly": &graphql.Field{
-				Type: graphql.Boolean,
+			"address": &graphql.Field{
+				Type: graphql.String,
+			},
+			"identification": &graphql.Field{
+				Type: graphql.String,
 			},
 		},
 	},

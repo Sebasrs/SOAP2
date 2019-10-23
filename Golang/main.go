@@ -5,9 +5,10 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/Sebasrs/SOAP2/gql"
-	"github.com/Sebasrs/SOAP2/server"
-	"github.com/Sebasrs/SOAP2/sql"
+	"./gql"
+	"./server"
+	"./sql"
+
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/render"
@@ -29,9 +30,8 @@ func initializeAPI() (*chi.Mux, *sql.Db) {
 	router := chi.NewRouter()
 
 	// Create a new connection to our pg database
-	db, err := sql.New(
-		sql.ConnString("localhost", 5432, "bradford", "go_graphql_db"),
-	)
+	db, err := sql.New("root:Serbas1500@tcp(127.0.0.1:3306)/soa")
+
 	if err != nil {
 		log.Fatal(err)
 	}

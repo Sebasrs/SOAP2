@@ -1,23 +1,26 @@
 package gql
 
 import (
-	"github.com/bradford-hamilton/go-graphql-api/postgres"
+	"../sql"
+
 	"github.com/graphql-go/graphql"
 )
 
 // Resolver struct holds a connection to our database
 type Resolver struct {
-	db *postgres.Db
+	db *sql.Db
 }
 
-// UserResolver resolves our user query through a db call to GetUserByName
-func (r *Resolver) UserResolver(p graphql.ResolveParams) (interface{}, error) {
+// ClientResolver resolves our user query through a db call to GetUserByName
+func (r *Resolver) ClientResolver(p graphql.ResolveParams) (interface{}, error) {
 	// Strip the name from arguments and assert that it's a string
-	name, ok := p.Args["name"].(string)
+	name, ok := p.Args["fName"].(string)
+
 	if ok {
-		users := r.db.GetUsersByName(name)
+		users := r.db.GetClientsByName(name)
+		return users, nil
+	} else {
+		users := r.db.GetClients()
 		return users, nil
 	}
-
-	return nil, nil
 }

@@ -1,7 +1,7 @@
 package gql
 
 import (
-	"github.com/Sebasrs/SOAP2/sql"
+	"../sql"
 	"github.com/graphql-go/graphql"
 )
 
@@ -24,13 +24,13 @@ func NewRoot(db *sql.Db) *Root {
 				Fields: graphql.Fields{
 					"users": &graphql.Field{
 						// Slice of User type which can be found in types.go
-						Type: graphql.NewList(User),
+						Type: graphql.NewList(Client),
 						Args: graphql.FieldConfigArgument{
-							"name": &graphql.ArgumentConfig{
+							"fName": &graphql.ArgumentConfig{
 								Type: graphql.String,
 							},
 						},
-						Resolve: resolver.UserResolver,
+						Resolve: resolver.ClientResolver,
 					},
 				},
 			},
