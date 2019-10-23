@@ -3,6 +3,7 @@ package sql
 import (
 	"database/sql"
 	"fmt"
+	"time"
 
 	//mysql driver
 	_ "github.com/go-sql-driver/mysql"
@@ -39,74 +40,116 @@ type Client struct {
 	Identification string
 }
 
-// GetClientsByName is called within our user query for graphql
-func (d *Db) GetClientsByName(name string) []Client {
-	// Prepare query, takes a name argument, protects from sql injection
-	stmt, err := d.Prepare("SELECT idClient, fName, lName, address, identification FROM clients WHERE fName='" + name + "'")
-	if err != nil {
-		fmt.Println("GetUserByName Preperation Err: ", err)
-	}
-
-	// Make query with our stmt, passing in name argument
-	rows, err := stmt.Query()
-	if err != nil {
-		fmt.Println("GetUserByName Query Err: ", err)
-	}
-
-	// Create User struct for holding each row's data
-	var r Client
-	// Create slice of Users for our response
-	clients := []Client{}
-	// Copy the columns from row into the values pointed at by r (User)
-	for rows.Next() {
-		err = rows.Scan(
-			&r.IDClient,
-			&r.FName,
-			&r.LName,
-			&r.Address,
-			&r.Identification,
-		)
-		if err != nil {
-			fmt.Println("Error scanning rows: ", err)
-		}
-		clients = append(clients, r)
-	}
-
-	return clients
+//Restaurant shape
+type Restaurant struct {
+	IDRestaurant       int
+	Name               string
+	Address            string
+	DisponibilityDays  string
+	DisponibilityHours string
+	ContactNumber      string
 }
 
-// GetClients is called within our user query for graphql
-func (d *Db) GetClients() []Client {
+// Order shape
+type Order struct {
+	IDOrder      int
+	IDClient     Client
+	IDRestaurant Restaurant
+	OrderDate    time.Time
+}
+
+// GetOrdersByAttribute is called within our user query for graphql
+func (d *Db) GetOrdersByAttribute(name string, col string) []Order {
 	// Prepare query, takes a name argument, protects from sql injection
-	stmt, err := d.Prepare("SELECT idClient, fName, lName, address, identification FROM clients")
+	stmt, err := d.Prepare("SELECT name, restaurants.address, contactNumber, disponibilityDays, disponibilityHours, fName, lName, clients.address, identification, orderDate FROM orders INNER JOIN soa.restaurants ON soa.orders.idRestaurant = soa.restaurants.idRestaurant INNER JOIN soa.clients ON soa.orders.idClient = soa.clients.idClient WHERE soa.orders." + col + "=" + name)
 	if err != nil {
-		fmt.Println("GetUserByName Preperation Err: ", err)
+		fmt.Println("GetOrdersByAttribute Preperation Err: ", err)
 	}
 
 	// Make query with our stmt, passing in name argument
 	rows, err := stmt.Query()
 	if err != nil {
-		fmt.Println("GetUserByName Query Err: ", err)
+		fmt.Println("GetOrdersByAttribute Query Err: ", err)
 	}
 
 	// Create User struct for holding each row's data
 	var r Client
+	var t Restaurant
+	var o Order
+	var date string
+	layout := "2006-01-02 15:04:05"
 	// Create slice of Users for our response
-	clients := []Client{}
+	orders := []Order{}
 	// Copy the columns from row into the values pointed at by r (User)
 	for rows.Next() {
 		err = rows.Scan(
-			&r.IDClient,
+			&t.Name,
+			&t.Address,
+			&t.ContactNumber,
+			&t.DisponibilityDays,
+			&t.DisponibilityHours,
 			&r.FName,
 			&r.LName,
 			&r.Address,
 			&r.Identification,
+			&date,
 		)
+		o.IDClient = r
+		o.IDRestaurant = t
+		o.OrderDate, _ = time.Parse(layout, date)
 		if err != nil {
 			fmt.Println("Error scanning rows: ", err)
 		}
-		clients = append(clients, r)
+		orders = append(orders, o)
 	}
 
-	return clients
+	return orders
+}
+
+// GetOrders is called within our user query for graphql
+func (d *Db) GetOrders() []Order {
+	// Prepare query, takes a name argument, protects from sql injection
+	stmt, err := d.Prepare("SELECT name, restaurants.address, contactNumber, disponibilityDays, disponibilityHours, fName, lName, clients.address, identification, orderDate FROM orders INNER JOIN soa.restaurants ON soa.orders.idRestaurant = soa.restaurants.idRestaurant INNER JOIN soa.clients ON soa.orders.idClient = soa.clients.idClient")
+	if err != nil {
+		fmt.Println("GetOrders Preperation Err: ", err)
+	}
+
+	// Make query with our stmt, passing in name argument
+	rows, err := stmt.Query()
+	if err != nil {
+		fmt.Println("GetOrders Query Err: ", err)
+	}
+
+	// Create User struct for holding each row's data
+	var r Client
+	var t Restaurant
+	var o Order
+	var date string
+	layout := "2006-01-02 15:04:05"
+	// Create slice of Users for our response
+	orders := []Order{}
+	// Copy the columns from row into the values pointed at by r (User)
+	for rows.Next() {
+		err = rows.Scan(
+			&t.Name,
+			&t.Address,
+			&t.ContactNumber,
+			&t.DisponibilityDays,
+			&t.DisponibilityHours,
+			&r.FName,
+			&r.LName,
+			&r.Address,
+			&r.Identification,
+			&date,
+		)
+		o.IDClient = r
+		o.IDRestaurant = t
+		o.OrderDate, _ = time.Parse(layout, date)
+		if err != nil {
+			fmt.Println("Error scanning rows: ", err)
+		}
+		orders = append(orders, o)
+	}
+
+	return orders
 }

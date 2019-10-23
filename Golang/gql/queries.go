@@ -22,15 +22,20 @@ func NewRoot(db *sql.Db) *Root {
 			graphql.ObjectConfig{
 				Name: "Query",
 				Fields: graphql.Fields{
-					"users": &graphql.Field{
-						// Slice of User type which can be found in types.go
-						Type: graphql.NewList(Client),
+					"orders": &graphql.Field{
+						Type: graphql.NewList(Order),
 						Args: graphql.FieldConfigArgument{
-							"fName": &graphql.ArgumentConfig{
-								Type: graphql.String,
+							"orderDate": &graphql.ArgumentConfig{
+								Type: graphql.DateTime,
+							},
+							"idRestaurant": &graphql.ArgumentConfig{
+								Type: graphql.Int,
+							},
+							"idClient": &graphql.ArgumentConfig{
+								Type: graphql.Int,
 							},
 						},
-						Resolve: resolver.ClientResolver,
+						Resolve: resolver.OrderResolver,
 					},
 				},
 			},
