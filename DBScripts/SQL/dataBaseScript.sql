@@ -110,6 +110,15 @@ CREATE TABLE IF NOT EXISTS `soa`.`users` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
+CREATE TABLE orders (
+  idOrder INT PRIMARY KEY AUTO_INCREMENT,
+  idRestaurant INT,
+  idClient INT,
+  orderDate DATETIME DEFAULT   CURRENT_TIMESTAMP,
+  FOREIGN KEY (idRestaurant) REFERENCES restaurants(idRestaurant),
+  FOREIGN KEY (idClient) REFERENCES clients(idClient)
+)
+
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
