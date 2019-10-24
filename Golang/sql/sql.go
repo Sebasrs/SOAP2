@@ -60,7 +60,6 @@ type Order struct {
 
 // GetOrdersByAttribute is called within our user query for graphql
 func (d *Db) GetOrdersByAttribute(name string, col string) []Order {
-	// Prepare query, takes a name argument, protects from sql injection
 	var query string
 	if col != "none" {
 		query = "SELECT name, restaurants.address, contactNumber, disponibilityDays, disponibilityHours, fName, lName, clients.address, identification, orderDate FROM orders INNER JOIN soa.restaurants ON soa.orders.idRestaurant = soa.restaurants.idRestaurant INNER JOIN soa.clients ON soa.orders.idClient = soa.clients.idClient WHERE soa.orders." + col + "=" + name
@@ -84,9 +83,9 @@ func (d *Db) GetOrdersByAttribute(name string, col string) []Order {
 	var o Order
 	var date string
 	layout := "2006-01-02 15:04:05"
-	// Create slice of Users for our response
+	// Create slice of Client for our response
 	orders := []Order{}
-	// Copy the columns from row into the values pointed at by r (User)
+	// Copy the columns from row into the values pointed at by r (Client)
 	for rows.Next() {
 		err = rows.Scan(
 			&t.Name,
@@ -112,29 +111,59 @@ func (d *Db) GetOrdersByAttribute(name string, col string) []Order {
 	return orders
 }
 
-// CreateOrder is called within our user query for graphql
+// CreateOrder is called within our createOrder mutation for graphql
 func (d *Db) CreateOrder(idRestaurant int, idClient int) Order {
 	var query = "INSERT INTO orders (idRestaurant, idClient) VALUES (?, ?)"
 	stmt, err := d.Prepare(query)
 	if err != nil {
 		fmt.Println("GetOrdersByAttribute Preperation Err: ", err)
 	}
-	// Make query with our stmt, passing in name argument
-	rows, err := stmt.Query(idRestaurant, idClient)
+	// Executes te insert
+	res, err := stmt.Exec(idRestaurant, idClient)
 	if err != nil {
 		fmt.Println("GetOrdersByAttribute Query Err: ", err)
 	}
 
 	var o Order
 
-	for rows.Next() {
-		err = rows.Scan(
-			&o.IDOrder,
-			&o.IDClient,
-			&o.IDRestaurant,
-			&o.OrderDate,
-		)
-	}
+	orderID, _ := res.LastInsertId()
+	o.IDOrder = int(orderID)
 
 	return o
+}
+
+// DeleteOrder is called within our user query for graphql
+func (d *Db) DeleteOrder(idOrder int) int {
+	var query = "DELETE FROM orders WHERE idOrder = ?"
+	stmt, err := d.Prepare(query)
+	if err != nil {
+		fmt.Println("GetOrdersByAttribute Preperation Err: ", err)
+	}
+	// Make query with our stmt, passing in name argument
+	res, err := stmt.Exec(idOrder)
+	if err != nil {
+		fmt.Println("GetOrdersByAttribute Query Err: ", err)
+	}
+
+	rowsAffected, _ := res.RowsAffected()
+
+	return int(rowsAffected)
+}
+
+// UpdateOrder is called within our user query for graphql
+func (d *Db) UpdateOrder(idOrder int, newClientID int) int {
+	var query = "UPDATE orders SET idClient = ? WHERE idOrder = ?"
+	stmt, err := d.Prepare(query)
+	if err != nil {
+		fmt.Println("GetOrdersByAttribute Preperation Err: ", err)
+	}
+	// Make query with our stmt, passing in name argument
+	res, err := stmt.Exec(newClientID, idOrder)
+	if err != nil {
+		fmt.Println("GetOrdersByAttribute Query Err: ", err)
+	}
+
+	rowsAffected, _ := res.RowsAffected()
+
+	return int(rowsAffected)
 }

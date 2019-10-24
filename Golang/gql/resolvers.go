@@ -32,7 +32,7 @@ func (r *Resolver) OrderResolver(p graphql.ResolveParams) (interface{}, error) {
 	return orders, nil
 }
 
-// OrderCreator resolves our user query through a db call to GetOrders
+// OrderCreator resolves our user query through a db call to CreateOrder
 func (r *Resolver) OrderCreator(p graphql.ResolveParams) (interface{}, error) {
 	// Strip the name from arguments and assert that it's a string
 	idRestaurant, _ := p.Args["idRestaurant"].(int)
@@ -41,4 +41,25 @@ func (r *Resolver) OrderCreator(p graphql.ResolveParams) (interface{}, error) {
 	order := r.db.CreateOrder(idRestaurant, idClient)
 
 	return order, nil
+}
+
+// OrderDeleter resolves our user query through a db call to DeleteOrder
+func (r *Resolver) OrderDeleter(p graphql.ResolveParams) (interface{}, error) {
+	// Strip the name from arguments and assert that it's a string
+	idOrder, _ := p.Args["idOrder"].(int)
+
+	rowsAffected := r.db.DeleteOrder(idOrder)
+
+	return rowsAffected, nil
+}
+
+// OrderUpdater resolves our user query through a db call to UpdateOrder
+func (r *Resolver) OrderUpdater(p graphql.ResolveParams) (interface{}, error) {
+	// Strip the name from arguments and assert that it's a string
+	idOrder, _ := p.Args["idOrder"].(int)
+	newClientID, _ := p.Args["newClientId"].(int)
+
+	rowsAffected := r.db.UpdateOrder(idOrder, newClientID)
+
+	return rowsAffected, nil
 }

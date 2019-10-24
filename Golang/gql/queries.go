@@ -58,6 +58,27 @@ func NewRoot(db *sql.Db) *Root {
 						},
 						Resolve: resolver.OrderCreator,
 					},
+					"deleteOrder": &graphql.Field{
+						Type: graphql.Int, // the return type for this field
+						Args: graphql.FieldConfigArgument{
+							"idOrder": &graphql.ArgumentConfig{
+								Type: graphql.NewNonNull(graphql.Int),
+							},
+						},
+						Resolve: resolver.OrderDeleter,
+					},
+					"updateOrder": &graphql.Field{
+						Type: graphql.Int, // the return type for this field
+						Args: graphql.FieldConfigArgument{
+							"idOrder": &graphql.ArgumentConfig{
+								Type: graphql.NewNonNull(graphql.Int),
+							},
+							"newClientId": &graphql.ArgumentConfig{
+								Type: graphql.NewNonNull(graphql.Int),
+							},
+						},
+						Resolve: resolver.OrderUpdater,
+					},
 				},
 			}),
 	}
