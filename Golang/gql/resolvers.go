@@ -3,7 +3,7 @@ package gql
 import (
 	"strconv"
 
-	"../sql"
+	"github.com/Sebasrs/SOAP2/Golang/sql"
 
 	"github.com/graphql-go/graphql"
 )

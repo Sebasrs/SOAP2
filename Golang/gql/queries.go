@@ -1,7 +1,7 @@
 package gql
 
 import (
-	"../sql"
+	"github.com/Sebasrs/SOAP2/Golang/sql"
 	"github.com/graphql-go/graphql"
 )
 

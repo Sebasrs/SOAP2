@@ -5,9 +5,9 @@ import (
 	"log"
 	"net/http"
 
-	"./gql"
-	"./server"
-	"./sql"
+	"github.com/Sebasrs/SOAP2/Golang/gql"
+	"github.com/Sebasrs/SOAP2/Golang/server"
+	"github.com/Sebasrs/SOAP2/Golang/sql"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
