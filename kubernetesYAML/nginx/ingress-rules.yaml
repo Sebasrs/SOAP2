@@ -1,0 +1,15 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+    -  host: nginx.example.local
+       http:
+        paths:
+        - path: /orders
+          backend:
+            serviceName: orders-service-svc
+            servicePort: 80

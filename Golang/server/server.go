@@ -2,6 +2,7 @@ package server
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/Sebasrs/SOAP2/Golang/gql"
@@ -40,5 +41,12 @@ func (s *Server) GraphQL() http.HandlerFunc {
 		// marshalling to json, automatically escaping HTML and setting
 		// the Content-Type as application/json.
 		render.JSON(w, r, result)
+	}
+}
+
+// GraphQL returns an http.HandlerFunc for our /graphql endpoint
+func (s *Server) ServiceWelcome() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintf(w, "orders-service")
 	}
 }
