@@ -62,7 +62,7 @@ func initializeAPI() (*chi.Mux, *sql.Db) {
 	)
 
 	// Create the graphql route with a Server method to handle it
+	router.get("/", s.serviceWelcome())
 	router.Post("/graphql", s.GraphQL())
-
 	return router, db
 }

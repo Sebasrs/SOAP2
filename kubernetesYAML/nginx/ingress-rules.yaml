@@ -9,11 +9,7 @@ spec:
     -  host: nginx.example.local
        http:
         paths:
-        - path: /v1
+        - path: /orders
           backend:
-            serviceName: hello-v1-svc
-            servicePort: 80
-        - path: /v2
-          backend:
-            serviceName: hello-v2-svc
+            serviceName: orders-service-svc
             servicePort: 80
