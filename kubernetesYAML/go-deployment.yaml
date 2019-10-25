@@ -18,4 +18,4 @@ spec:
         image: sebasrs/go-soa:latest
         imagePullPolicy: IfNotPresent
         ports:
-          - containerPort: 4000  # Should match the port number that the Go application listens on
+          - containerPort: 8100  # Should match the port number that the Go application listens on

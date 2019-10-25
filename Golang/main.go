@@ -22,7 +22,7 @@ func main() {
 	defer db.Close()
 
 	// Listen on port 4000 and if there's an error log it and exit
-	log.Fatal(http.ListenAndServe(":4000", router))
+	log.Fatal(http.ListenAndServe(":8100", router))
 }
 
 func initializeAPI() (*chi.Mux, *sql.Db) {
@@ -30,7 +30,7 @@ func initializeAPI() (*chi.Mux, *sql.Db) {
 	router := chi.NewRouter()
 
 	// Create a new connection to our pg database
-	db, err := sql.New("root:Serbas1500@tcp(127.0.0.1:3306)/soa")
+	db, err := sql.New("root:Serbas1500@tcp(10.111.96.170:3306)/soa")
 
 	if err != nil {
 		log.Fatal(err)
@@ -62,7 +62,7 @@ func initializeAPI() (*chi.Mux, *sql.Db) {
 	)
 
 	// Create the graphql route with a Server method to handle it
-	router.get("/", s.serviceWelcome())
+	router.Get("/", s.ServiceWelcome())
 	router.Post("/graphql", s.GraphQL())
 	return router, db
 }

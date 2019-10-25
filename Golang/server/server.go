@@ -45,7 +45,7 @@ func (s *Server) GraphQL() http.HandlerFunc {
 }
 
 // GraphQL returns an http.HandlerFunc for our /graphql endpoint
-func (s *Server) serviceWelcome() http.HandlerFunc {
+func (s *Server) ServiceWelcome() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "orders-service")
 	}
