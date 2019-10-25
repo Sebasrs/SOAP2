@@ -67,6 +67,14 @@ CREATE TABLE IF NOT EXISTS `soa`.`restaurants` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
+CREATE TABLE orders (
+  idOrder INT PRIMARY KEY,
+  idClient INT,
+  idRestaurant INT,
+  FOREIGN KEY (idClient) REFERENCES clients(idClient),
+  FOREIGN KEY (idRestaurant) REFERENCES restaurants(idRestaurant)
+);
+
 
 -- -----------------------------------------------------
 -- Table `soa`.`clients`
