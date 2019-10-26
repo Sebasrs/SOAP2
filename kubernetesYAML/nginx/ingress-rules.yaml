@@ -14,10 +14,12 @@ spec:
           backend:
             serviceName: orders-service-svc
             servicePort: 80
-    -  host: nginx.example.local
-       http:
-        paths:
         - path: /users
           backend:
             serviceName: users-service-svc
             servicePort: 80
+        - path: /catalog
+          backend:
+            serviceName: catalog-service-svc
+            servicePort: 80
+        
