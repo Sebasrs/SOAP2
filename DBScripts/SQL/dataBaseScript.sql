@@ -80,6 +80,7 @@ CREATE TABLE IF NOT EXISTS `soa`.`clients` (
   `identification` VARCHAR(45) NOT NULL,
   `created_at` DATETIME NULL DEFAULT NULL,
   `updated_at` DATETIME NULL DEFAULT NULL,
+  `enabled` INT NOT NULL,
   PRIMARY KEY (`idClient`))
 ENGINE = InnoDB;
 
@@ -95,6 +96,7 @@ CREATE TABLE IF NOT EXISTS `soa`.`users` (
   `Restaurant_idRestaurant` INT NOT NULL,
   `created_at` DATETIME NULL DEFAULT NULL,
   `updated_at` DATETIME NULL DEFAULT NULL,
+  `enabled` INT NOT NULL,
   PRIMARY KEY (`idUser`),
   INDEX `fk_User_Client1_idx` (`Client_idClient` ASC),
   INDEX `fk_User_Restaurant1_idx` (`Restaurant_idRestaurant` ASC),
