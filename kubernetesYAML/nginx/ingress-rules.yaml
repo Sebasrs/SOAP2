@@ -14,12 +14,11 @@ spec:
           backend:
             serviceName: orders-service-svc
             servicePort: 80
-        - path: /users
-          backend:
-            serviceName: users-service-svc
-            servicePort: 80
         - path: /catalog
           backend:
             serviceName: catalog-service-svc
             servicePort: 80
-        
+        - path: /reports
+          backend:
+            serviceName: reports-service-svc
+            servicePort: 80
