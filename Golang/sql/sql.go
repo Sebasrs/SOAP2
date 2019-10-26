@@ -9,26 +9,9 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-// Db is our database struct used for interacting with the database
+// Db struct to interact with the database
 type Db struct {
 	*sql.DB
-}
-
-// New makes a new database using the connection string and
-// returns it, otherwise returns the error
-func New(connString string) (*Db, error) {
-	db, err := sql.Open("mysql", connString)
-	if err != nil {
-		return nil, err
-	}
-
-	// Check that our connection is good
-	err = db.Ping()
-	if err != nil {
-		return nil, err
-	}
-
-	return &Db{db}, nil
 }
 
 // Client shape
@@ -61,51 +44,60 @@ type Order struct {
 // GetOrdersByAttribute is called within our user query for graphql
 func (d *Db) GetOrdersByAttribute(name string, col string) []Order {
 	var query string
+	query = `SELECT name, restaurants.address, contactNumber, disponibilityDays, disponibilityHours, fName, lName, clients.address, identification, orderDate
+					 FROM orders 
+					 INNER JOIN soa.restaurants 
+			  		 ON soa.orders.idRestaurant = soa.restaurants.idRestaurant 
+			 		 INNER JOIN soa.clients 
+		 				 ON soa.orders.idClient = soa.clients.idClient 
+					 WHERE soa.orders.`
+
 	if col != "none" {
-		query = "SELECT name, restaurants.address, contactNumber, disponibilityDays, disponibilityHours, fName, lName, clients.address, identification, orderDate FROM orders INNER JOIN soa.restaurants ON soa.orders.idRestaurant = soa.restaurants.idRestaurant INNER JOIN soa.clients ON soa.orders.idClient = soa.clients.idClient WHERE soa.orders." + col + "=" + name
-	} else {
-		query = "SELECT name, restaurants.address, contactNumber, disponibilityDays, disponibilityHours, fName, lName, clients.address, identification, orderDate FROM orders INNER JOIN soa.restaurants ON soa.orders.idRestaurant = soa.restaurants.idRestaurant INNER JOIN soa.clients ON soa.orders.idClient = soa.clients.idClient"
+		query = query + col + "=" + name
 	}
+
 	stmt, err := d.Prepare(query)
 	if err != nil {
 		fmt.Println("GetOrdersByAttribute Preperation Err: ", err)
 	}
 
-	// Make query with our stmt, passing in name argument
 	rows, err := stmt.Query()
 	if err != nil {
 		fmt.Println("GetOrdersByAttribute Query Err: ", err)
 	}
 
-	// Create User struct for holding each row's data
-	var r Client
-	var t Restaurant
-	var o Order
+	var dbClient Client
+	var dbRestaurant Restaurant
+	var dbOrder Order
 	var date string
-	layout := "2006-01-02 15:04:05"
-	// Create slice of Client for our response
+
+	dateLayout := "2006-01-02 15:04:05"
+
 	orders := []Order{}
-	// Copy the columns from row into the values pointed at by r (Client)
+
 	for rows.Next() {
 		err = rows.Scan(
-			&t.Name,
-			&t.Address,
-			&t.ContactNumber,
-			&t.DisponibilityDays,
-			&t.DisponibilityHours,
-			&r.FName,
-			&r.LName,
-			&r.Address,
-			&r.Identification,
+			&dbRestaurant.Name,
+			&dbRestaurant.Address,
+			&dbRestaurant.ContactNumber,
+			&dbRestaurant.DisponibilityDays,
+			&dbRestaurant.DisponibilityHours,
+			&dbClient.FName,
+			&dbClient.LName,
+			&dbClient.Address,
+			&dbClient.Identification,
 			&date,
 		)
-		o.IDClient = r
-		o.IDRestaurant = t
-		o.OrderDate, _ = time.Parse(layout, date)
+
+		dbOrder.IDClient = dbClient
+		dbOrder.IDRestaurant = dbRestaurant
+		dbOrder.OrderDate, _ = time.Parse(dateLayout, date)
+
 		if err != nil {
 			fmt.Println("Error scanning rows: ", err)
 		}
-		orders = append(orders, o)
+
+		orders = append(orders, dbOrder)
 	}
 
 	return orders
@@ -114,22 +106,25 @@ func (d *Db) GetOrdersByAttribute(name string, col string) []Order {
 // CreateOrder is called within our createOrder mutation for graphql
 func (d *Db) CreateOrder(idRestaurant int, idClient int) Order {
 	var query = "INSERT INTO orders (idRestaurant, idClient) VALUES (?, ?)"
+
 	stmt, err := d.Prepare(query)
+
 	if err != nil {
 		fmt.Println("GetOrdersByAttribute Preperation Err: ", err)
 	}
-	// Executes te insert
+
 	res, err := stmt.Exec(idRestaurant, idClient)
+
 	if err != nil {
 		fmt.Println("GetOrdersByAttribute Query Err: ", err)
 	}
 
-	var o Order
+	var dbOrder Order
 
 	orderID, _ := res.LastInsertId()
-	o.IDOrder = int(orderID)
+	dbOrder.IDOrder = int(orderID)
 
-	return o
+	return dbOrder
 }
 
 // DeleteOrder is called within our user query for graphql
@@ -139,7 +134,7 @@ func (d *Db) DeleteOrder(idOrder int) int {
 	if err != nil {
 		fmt.Println("GetOrdersByAttribute Preperation Err: ", err)
 	}
-	// Make query with our stmt, passing in name argument
+
 	res, err := stmt.Exec(idOrder)
 	if err != nil {
 		fmt.Println("GetOrdersByAttribute Query Err: ", err)
@@ -153,12 +148,15 @@ func (d *Db) DeleteOrder(idOrder int) int {
 // UpdateOrder is called within our user query for graphql
 func (d *Db) UpdateOrder(idOrder int, newClientID int) int {
 	var query = "UPDATE orders SET idClient = ? WHERE idOrder = ?"
+
 	stmt, err := d.Prepare(query)
+
 	if err != nil {
 		fmt.Println("GetOrdersByAttribute Preperation Err: ", err)
 	}
-	// Make query with our stmt, passing in name argument
+
 	res, err := stmt.Exec(newClientID, idOrder)
+
 	if err != nil {
 		fmt.Println("GetOrdersByAttribute Query Err: ", err)
 	}
