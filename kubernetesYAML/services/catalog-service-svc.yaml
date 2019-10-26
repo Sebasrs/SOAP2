@@ -1,0 +1,11 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: catalog-service-svc
+spec:
+  selector:
+    app: catalog-service
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8110

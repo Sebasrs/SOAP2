@@ -1,15 +1,15 @@
 module.exports = (app, db) => {
-  app.get("/dishes", (req, res) => {
+  app.get("/catalog/dishes", (req, res) => {
     let query = "MATCH (n:Dish) RETURN n";
 
     db.cypherQuery(query, function(err, result) {
-      if (err) res.send(query);
+      if (err) res.send(err);
 
       res.send(result.data);
     });
   });
 
-  app.get("/dishes/:id", (req, res) => {
+  app.get("/catalog/dishes/:id", (req, res) => {
     db.readNode(req.params.id, function(err, node) {
       if (err) throw err;
 
@@ -17,7 +17,7 @@ module.exports = (app, db) => {
     });
   });
 
-  app.post("/dishes", (req, res) => {
+  app.post("/catalog/dishes", (req, res) => {
     let query =
       "CREATE (a:Dish {name: '" +
       req.body.name +
@@ -30,13 +30,13 @@ module.exports = (app, db) => {
       "'}) MERGE (b)-[r:at]->(a) RETURN a";
 
     db.cypherQuery(query, function(err, result) {
-      if (err) res.send(query);
+      if (err) res.send(err);
 
       res.send(result);
     });
   });
 
-  app.put("/dishes/:id", (req, res) => {
+  app.put("/catalog/dishes/:id", (req, res) => {
     db.updateNode(
       req.params.id,
       {
@@ -57,14 +57,14 @@ module.exports = (app, db) => {
     );
   });
 
-  app.delete("/dishes/:name", (req, res) => {
+  app.delete("/catalog/dishes/:name", (req, res) => {
     let query =
       "MATCH (n:Dish {name: '" +
       req.params.name +
       "'}) SET n.enabled = 0 RETURN n";
 
     db.cypherQuery(query, function(err, result) {
-      if (err) res.send(query);
+      if (err) res.send(err);
 
       res.send(result);
     });

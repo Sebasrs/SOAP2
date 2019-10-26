@@ -1,15 +1,15 @@
 module.exports = (app, db) => {
-  app.get("/services", (req, res) => {
+  app.get("/catalog/services", (req, res) => {
     let query = "MATCH (n:Service) RETURN n";
 
     db.cypherQuery(query, function(err, result) {
-      if (err) res.send(query);
+      if (err) res.send(err);
 
       res.send(result.data);
     });
   });
 
-  app.get("/services/:id", (req, res) => {
+  app.get("/catalog/services/:id", (req, res) => {
     db.readNode(req.params.id, function(err, node) {
       if (err) throw err;
 
@@ -17,7 +17,7 @@ module.exports = (app, db) => {
     });
   });
 
-  app.put("/services/:id", (req, res) => {
+  app.put("/catalog/services/:id", (req, res) => {
     db.updateNode(
       req.params.id,
       {
@@ -37,14 +37,14 @@ module.exports = (app, db) => {
     );
   });
 
-  app.delete("/services/:name", (req, res) => {
+  app.delete("/catalog/services/:name", (req, res) => {
     let query =
       "MATCH (n:Service {name: '" +
       req.params.name +
       "'}) SET n.enabled = 0 RETURN n";
 
     db.cypherQuery(query, function(err, result) {
-      if (err) res.send(query);
+      if (err) res.send(err);
 
       res.send(result);
     });

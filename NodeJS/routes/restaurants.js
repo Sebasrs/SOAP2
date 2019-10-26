@@ -1,15 +1,15 @@
 module.exports = (app, db) => {
-  app.get("/restaurants", (req, res) => {
+  app.get("/catalog/restaurants", (req, res) => {
     let query = "MATCH (n:Restaurant) RETURN n";
 
     db.cypherQuery(query, function(err, result) {
-      if (err) res.send(query);
+      if (err) res.send(err);
 
       res.send(result.data);
     });
   });
 
-  app.get("/restaurants/:id", (req, res) => {
+  app.get("/catalog/restaurants/:id", (req, res) => {
     db.readNode(req.params.id, function(err, node) {
       if (err) throw err;
 
@@ -17,7 +17,7 @@ module.exports = (app, db) => {
     });
   });
 
-  app.post("/restaurants", (req, res) => {
+  app.post("/catalog/restaurants", (req, res) => {
     let query =
       "CREATE (a:Restaurant {name: '" +
       req.body.name +
@@ -34,13 +34,13 @@ module.exports = (app, db) => {
     console.log(query);
 
     db.cypherQuery(query, function(err, result) {
-      if (err) res.send(query);
+      if (err) res.send(err);
 
       res.send(result);
     });
   });
 
-  app.put("/restaurants/:id", (req, res) => {
+  app.put("/catalog/restaurants/:id", (req, res) => {
     db.updateNode(
       req.params.id,
       {
@@ -62,14 +62,14 @@ module.exports = (app, db) => {
     );
   });
 
-  app.delete("/restaurants/:name", (req, res) => {
+  app.delete("/catalog/restaurants/:name", (req, res) => {
     let query =
       "MATCH (n:Restaurant {name: '" +
       req.params.name +
       "'}) SET n.enabled = 0 RETURN n";
 
     db.cypherQuery(query, function(err, result) {
-      if (err) res.send(query);
+      if (err) res.send(err);
 
       res.send(result);
     });
