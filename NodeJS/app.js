@@ -1,18 +1,16 @@
 const express = require("express");
-const expressql = require("express-graphql");
-const schema = require("./graphql/schema");
+const bodyparser = require("body-parser");
 
-const PORT = 5000;
+const db = require("./db/database");
+
+const PORT = 3001;
 const app = express();
 
-app.use(
-  "/graphql",
-  expressql({
-    schema: schema,
-    pretty: true,
-    graphiql: true
-  })
-);
+app.use(bodyparser.json());
+
+require("./routes/restaurants")(app, db);
+require("./routes/dishes")(app, db);
+require("./routes/services")(app, db);
 
 app.listen(PORT, () => {
   console.log(`Listen on port ${PORT}`);

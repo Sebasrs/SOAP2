@@ -1,10 +1,4 @@
-const neo4j = require("neo4j-driver").v1;
+const neo4j = require("node-neo4j");
+db = new neo4j("http://neo4j:12345@localhost:7474");
 
-const driver = neo4j.driver(
-  "bolt://localhost",
-  neo4j.auth.basic("neo4j", "12345")
-);
-
-const session = driver.session();
-
-module.exports = session;
+module.exports = db;
