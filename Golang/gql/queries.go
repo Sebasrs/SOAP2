@@ -13,11 +13,8 @@ type Root struct {
 
 // NewRoot returns base query type. This is where we add all the base queries
 func NewRoot(db *sql.Db) *Root {
-	// Create a resolver holding our databse. Resolver can be found in resolvers.go
-	resolver := Resolver{db: db}
 
-	// Create a new Root that describes our base query set up. In this
-	// example we have a user query that takes one argument called name
+	resolver := Resolver{db: db}
 
 	root := Root{
 		Query: graphql.NewObject(
@@ -47,7 +44,7 @@ func NewRoot(db *sql.Db) *Root {
 				Name: "Mutation",
 				Fields: graphql.Fields{
 					"createOrder": &graphql.Field{
-						Type: Order, // the return type for this field
+						Type: Order,
 						Args: graphql.FieldConfigArgument{
 							"idRestaurant": &graphql.ArgumentConfig{
 								Type: graphql.NewNonNull(graphql.Int),
@@ -59,7 +56,7 @@ func NewRoot(db *sql.Db) *Root {
 						Resolve: resolver.OrderCreator,
 					},
 					"deleteOrder": &graphql.Field{
-						Type: graphql.Int, // the return type for this field
+						Type: graphql.Int,
 						Args: graphql.FieldConfigArgument{
 							"idOrder": &graphql.ArgumentConfig{
 								Type: graphql.NewNonNull(graphql.Int),
@@ -68,7 +65,7 @@ func NewRoot(db *sql.Db) *Root {
 						Resolve: resolver.OrderDeleter,
 					},
 					"updateOrder": &graphql.Field{
-						Type: graphql.Int, // the return type for this field
+						Type: graphql.Int,
 						Args: graphql.FieldConfigArgument{
 							"idOrder": &graphql.ArgumentConfig{
 								Type: graphql.NewNonNull(graphql.Int),

@@ -16,29 +16,26 @@ import (
 )
 
 func main() {
-	// Initialize our api and return a pointer to our router for http.ListenAndServe
-	// and a pointer to our db to defer its closing when main() is finished
+
 	router, db := initializeAPI()
 	defer db.Close()
 
-	// Listen on port 4000 and if there's an error log it and exit
+	// Deploy server on port 8100
 	log.Fatal(http.ListenAndServe(":8100", router))
 }
 
 func initializeAPI() (*chi.Mux, *sql.Db) {
-	// Create a new router
 	router := chi.NewRouter()
 
-	// Create a new connection to our pg database
+	// Database connection
 	db, err := sql.New("root:password@tcp(mysql:3306)/soa")
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	// Create our root query for graphql
 	rootQuery := gql.NewRoot(db)
-	// Create a new graphql schema, passing in the the root query
+
 	sc, err := graphql.NewSchema(
 		graphql.SchemaConfig{Query: rootQuery.Query, Mutation: rootQuery.Mutation},
 	)
@@ -46,19 +43,16 @@ func initializeAPI() (*chi.Mux, *sql.Db) {
 		fmt.Println("Error creating schema: ", err)
 	}
 
-	// Create a server struct that holds a pointer to our database as well
-	// as the address of our graphql schema
 	s := server.Server{
 		GqlSchema: &sc,
 	}
 
-	// Add some middleware to our router
 	router.Use(
-		render.SetContentType(render.ContentTypeJSON), // set content-type headers as application/json
-		middleware.Logger,          // log api request calls
-		middleware.DefaultCompress, // compress results, mostly gzipping assets and json
-		middleware.StripSlashes,    // match paths with a trailing slash, strip it, and continue routing through the mux
-		middleware.Recoverer,       // recover from panics without crashing server
+		render.SetContentType(render.ContentTypeJSON),
+		middleware.Logger,
+		middleware.DefaultCompress,
+		middleware.StripSlashes,
+		middleware.Recoverer,
 	)
 
 	// Create the graphql route with a Server method to handle it
