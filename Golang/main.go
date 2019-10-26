@@ -30,7 +30,7 @@ func initializeAPI() (*chi.Mux, *sql.Db) {
 	router := chi.NewRouter()
 
 	// Create a new connection to our pg database
-	db, err := sql.New("root:Serbas1500@tcp(10.111.96.170:3306)/soa")
+	db, err := sql.New("root:password@tcp(mysql:3306)/soa")
 
 	if err != nil {
 		log.Fatal(err)
@@ -62,7 +62,7 @@ func initializeAPI() (*chi.Mux, *sql.Db) {
 	)
 
 	// Create the graphql route with a Server method to handle it
-	router.Get("/", s.ServiceWelcome())
-	router.Post("/graphql", s.GraphQL())
+	router.Get("/orders", s.ServiceWelcome())
+	router.Post("/orders/graphql", s.GraphQL())
 	return router, db
 }
