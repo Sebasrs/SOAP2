@@ -1,0 +1,10 @@
+insert into users (idUser, userName, password, Client_idClient, Restaurant_idRestaurant) values (1, 'gdobbin0', 'RHznJkHgZx5', 1, 9);
+insert into users (idUser, userName, password, Client_idClient, Restaurant_idRestaurant) values (2, 'bmays1', 'jwqoCV', 2, 6);
+insert into users (idUser, userName, password, Client_idClient, Restaurant_idRestaurant) values (3, 'jdeath2', 'dpNa4vmIIaq', 3, 6);
+insert into users (idUser, userName, password, Client_idClient, Restaurant_idRestaurant) values (4, 'rsetch3', 'FGMnm86qKd', 4, 7);
+insert into users (idUser, userName, password, Client_idClient, Restaurant_idRestaurant) values (5, 'rpriestman4', 'FdvKZ40NrZj', 5, 8);
+insert into users (idUser, userName, password, Client_idClient, Restaurant_idRestaurant) values (6, 'asimonsson5', '1GrapZK2Wa', 6, 8);
+insert into users (idUser, userName, password, Client_idClient, Restaurant_idRestaurant) values (7, 'rhallett6', 'elHcEHR', 7, 3);
+insert into users (idUser, userName, password, Client_idClient, Restaurant_idRestaurant) values (8, 'ecastleman7', 'etwFleTf', 8, 1);
+insert into users (idUser, userName, password, Client_idClient, Restaurant_idRestaurant) values (9, 'cdomm8', 'kurNqnPw', 9, 9);
+insert into users (idUser, userName, password, Client_idClient, Restaurant_idRestaurant) values (10, 'ksamworth9', '7wvbGzm', 10, 3);

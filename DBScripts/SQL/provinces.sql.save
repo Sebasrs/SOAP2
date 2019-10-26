@@ -1,0 +1,2 @@
+insert into provinces (name, Country_idCountry) VALUES ("San Jose");
+/home/ema0898/Descargas/orders.sql

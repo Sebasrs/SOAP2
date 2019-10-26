@@ -8,14 +8,14 @@ import mysql.connector
 mydb = mysql.connector.connect(
     host="mysql",
     user="root",
-    passwd="password",
+    password="password",
     database="soa"
 )
 
 database = mydb.cursor()
 
 
-@app.route('/orders')
+@app.route('/reports/orders')
 def orders():
     try:
         query = ("SELECT restaurants.name AS Restaurant, clients.fName AS ClientFirstName, clients.lName "
@@ -42,7 +42,7 @@ def orders():
         print(e)
 
 
-@app.route('/orders/day/<int:day>')
+@app.route('/reports/orders/day/<int:day>')
 def ordersDay(day):
     try:
         query = ("SELECT restaurants.name AS Restaurant, clients.fName AS ClientFirstName, clients.lName "
@@ -68,7 +68,7 @@ def ordersDay(day):
         print(e)
 
 
-@app.route('/orders/month/<int:month>')
+@app.route('/reports/orders/month/<int:month>')
 def ordersMonth(month):
     try:
         query = ("SELECT restaurants.name AS Restaurant, clients.fName AS ClientFirstName, clients.lName "
@@ -94,7 +94,7 @@ def ordersMonth(month):
         print(e)
 
 
-@app.route('/orders/year/<int:year>')
+@app.route('/reports/orders/year/<int:year>')
 def ordersYear(year):
     try:
         query = ("SELECT restaurants.name AS Restaurant, clients.fName AS ClientFirstName, clients.lName "
@@ -120,7 +120,7 @@ def ordersYear(year):
         print(e)
 
 
-@app.route('/users')
+@app.route('/reports/users')
 def use():
     try:
         query = ("SELECT clients.fName, clients.lName, clients.address, clients.identification, users.userName, users.password "
@@ -146,7 +146,7 @@ def use():
         print(e)
 
 
-@app.route('/restaurants/<int:id>')
+@app.route('/reports/restaurants/<int:id>')
 def user(id):
     try:
         query = ("SELECT restaurants.name AS Restaurant, clients.fName AS ClientFirstName, clients.lName AS ClientLastName, orders.orderDate AS Date "
@@ -171,7 +171,7 @@ def user(id):
         print(e)
 
 
-@app.route("/")
+@app.route("/reports/")
 def index():
     resp = "Funciona"
     return resp
@@ -187,7 +187,3 @@ def not_found(error=None):
     resp.status_code = 404
 
     return resp
-
-
-if __name__ == "__main__":
-    app.run(port=8120)
