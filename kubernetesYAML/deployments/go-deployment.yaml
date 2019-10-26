@@ -15,7 +15,7 @@ spec:
     spec:                        # Spec for the container which will run in the Pod
       containers:
       - name: orders-service
-        image: sebasrs/orders-service:0.1.1
+        image: sebasrs/go-soa:latest
         imagePullPolicy: IfNotPresent
         ports:
           - containerPort: 8100  # Should match the port number that the Go application listens on
